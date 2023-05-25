@@ -42,16 +42,8 @@ class Spectral(nn.Module):
         self.args = args
         self.backbone = backbone
         self.projector = projection_identity()
-        self.proto_num = self.args.dataset.numclasses - self.args.labeled_num
-        self.register_buffer("label_stat", torch.zeros(self.proto_num, dtype=torch.int))
 
-    # def forward(self, x1, x2, mu=1.0):
-    #     f1, f2 = self.backbone(x1), self.backbone(x2)
-    #     z1, z2 = self.projector(f1), self.projector(f2)
-    #     L, d_dict = D(z1, z2, mu=self.mu)
-    #     return {'loss': L, 'd_dict': d_dict}
-
-    def forward_eval(self, x, proto_type=None, layer='penul'):
+    def forward_eval(self, x, layer='penul'):
         penul_feat = self.backbone.features(x)
         proj_feat = normalized_thresh(self.projector(self.backbone.heads(penul_feat)))
 
@@ -73,14 +65,13 @@ class Spectral(nn.Module):
         L, d_dict = D(z1, z2, mu=self.mu)
         return {'loss': L, 'd_dict': d_dict}
 
+    def forward_uonly(self, ux1, ux2):
+        x1 = ux1
+        x2 = ux2
+        f1, f2 = self.backbone(x1), self.backbone(x2)
+        z1, z2 = self.projector(f1), self.projector(f2)
+        L, d_dict = D(z1, z2, mu=self.mu)
+        return {'loss': L, 'd_dict': d_dict}
+
     def forward(self, x1, x2, ux1, ux2, target, mu=1.0):
         return self.forward_ncd(x1, x2, ux1, ux2, target, mu)
-
-
-    @torch.no_grad()
-    def sync_prototype(self):
-        pass
-
-    @torch.no_grad()
-    def reset_stat(self):
-        self.label_stat = torch.zeros(self.proto_num, dtype=torch.int).to(self.label_stat.device)

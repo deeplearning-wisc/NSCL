@@ -230,7 +230,7 @@ def get_args():
     parser.add_argument('--momentum_proto', default=0.95, type=float)
     parser.add_argument('--seed', default=0, type=int)
     parser.add_argument('--base_lr', default=0.03, type=float)
-    parser.add_argument('--layer', default='proj', type=str)
+    parser.add_argument('--layer', default='penul', type=str)
 
     args = parser.parse_args()
 
