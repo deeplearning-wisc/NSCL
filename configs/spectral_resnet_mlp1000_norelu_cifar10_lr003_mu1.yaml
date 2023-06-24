@@ -1,4 +1,4 @@
-name: spectral-resnet18-mlp1000-norelu-cifar10-lr003-mu1
+name: spectral-resnet18-cifar10
 dataset: 
   name: cifar10
   image_size: 32
@@ -9,6 +9,7 @@ model:
   name: spectral
   backbone: resnet18_cifar_variant1_mlp_norelu
   mu: 1
+  numclasses: 10
 
 train:
   optimizer: 
